@@ -5,8 +5,6 @@ const path = require('path');
 const staticPath = path.join(__dirname, '..', 'public');
 const fs = require('fs');
 const filePath = path.join(__dirname, '..', 'db', 'db.json');
-console.log('cheetoh', filePath);
-
 
 app.use(express.static(staticPath));
 app.use(express.json());
@@ -51,6 +49,8 @@ app.post('/api/notes', (req, res) => {
                 res.status(500).send('Error writing to JSON file');
                 return;
             }
+            // res.json(responseData);
+            res.status(200).send('Note saved successfully');
         });
     });
 });

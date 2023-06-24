@@ -74,6 +74,7 @@ const handleNoteSave = () => {
   saveNote(newNote).then(() => {
     getAndRenderNotes();
     renderActiveNote();
+    window.location.href = '/notes';
   });
 };
 
