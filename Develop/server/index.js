@@ -8,6 +8,7 @@ const filePath = path.join(__dirname, '..', 'db', 'db.json');
 
 app.use(express.static(staticPath));
 app.use(express.json());
+
 app.get('/', (req, res) => {
     const filePath = path.join(staticPath, 'index.html');
     res.sendFile(filePath);
@@ -27,7 +28,6 @@ app.get('/api/notes', (req, res) => {
         const jsonData = JSON.parse(data);
         res.json(jsonData);
     });
-
 });
 
 app.post('/api/notes', (req, res) => {
@@ -41,7 +41,6 @@ app.post('/api/notes', (req, res) => {
         }
         const jsonData = JSON.parse(data);
         const responseData = JSON.stringify([...jsonData, req.body]);
-        // res.json(responseData);
 
         fs.writeFile(filePath, responseData, 'utf8', (err) => {
             if (err) {
@@ -49,12 +48,31 @@ app.post('/api/notes', (req, res) => {
                 res.status(500).send('Error writing to JSON file');
                 return;
             }
-            // res.json(responseData);
             res.status(200).send('Note saved successfully');
         });
     });
 });
 
-    app.listen(port, () => {
-        console.log(`Example app listening on port ${port}`)
+app.delete('/api/notes/:id', (req, res) => {
+    console.log('delete', req.params.id);
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        const jsonData = JSON.parse(data);
+        const newJsonData = jsonData.filter((note) => note.title !== req.params.id);
+        fs.writeFile(filePath, JSON.stringify(newJsonData), 'utf8', (err) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Error writing to JSON file');
+                return;
+            }
+            res.status(200).send('Note deleted successfully');
+        });
     });
+});
+
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+});
